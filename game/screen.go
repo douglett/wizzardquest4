@@ -8,8 +8,8 @@ type Screen struct {
 	winname     string
 	bgcolor     ray.Color
 	camera      ray.Camera2D
-	tileset     ray.Texture2D
-	sound       ray.Sound
+	// tileset     ray.Texture2D
+	// sound       ray.Sound
 	offsetx, offsety  int
 }
 

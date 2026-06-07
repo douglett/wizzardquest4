@@ -13,6 +13,7 @@ var screen = Screen{
 	winname: "WizzardQuest4",
 	bgcolor: ColorBlack,
 }
+var tmap TiledMap
 
 // begin
 func Start() {
