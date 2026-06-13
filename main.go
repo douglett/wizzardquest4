@@ -29,7 +29,9 @@ func main() {
 	})
 
 	for !gfx.ShouldQuit() {
-		scene.Paint(gfx.Screen.Offx, gfx.Screen.Offy)
+		scene.Paint(0, 0)
 		gfx.Flip()
+		// scene.X++
+		// gfx.Screen.Offx++
 	}
 }

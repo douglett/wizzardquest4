@@ -11,5 +11,5 @@ func (sh *Shape) Zindex() int {
 }
 
 func (sh *Shape) Paint(x, y int) {
-	Rect(sh.X + y, sh.Y + y, sh.W, sh.H, sh.Color)
+	Rect(sh.X + x, sh.Y + y, sh.W, sh.H, sh.Color)
 }
