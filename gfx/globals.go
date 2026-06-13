@@ -8,13 +8,12 @@ var ColorWhite     = ray.Color{255, 255, 255, 255}
 var ColorBlack     = ray.Color{0, 0, 0, 255}
 
 type Paintable interface {
-	Paint (x, y int)
-	// Zindex  () int
+	Paint  (x, y int)
+	Zindex () int
 }
 
 // game state
 var Screen = ScreenType{
-	width: 160, height: 160, zoom: 4, tsize: 16,
-	winname: "WizzardQuest4",
-	bgcolor: ColorBlack,
+	Width: 160, Height: 160, Zoom: 4, Tsize: 16,
+	Winname: "WizzardQuest4",
 }

@@ -1,12 +1,16 @@
 package gfx
 
 type Container struct {
-	X, Y  int
+	X, Y, Z   int
 	Children  []Paintable
 }
 
 func (con * Container) Append(p Paintable) {
 	con.Children = append(con.Children, p)
+}
+
+func (con * Container) Zindex() int {
+	return con.Z
 }
 
 func (con * Container) Paint(x, y int) {
