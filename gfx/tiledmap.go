@@ -1,4 +1,4 @@
-package game
+package gfx
 import ray "github.com/gen2brain/raylib-go/raylib"
 import "fmt"
 import "os"
@@ -66,12 +66,12 @@ func (tm *TiledMap) paint() {
 			// show game tile
 			tile := layer.IData[y * tm.xml.Width + x]
 			if tile > 0 {
-				screen.blitt(tm.tileset, tile - 1, (x * tm.tsize) + posx, (y * tm.tsize) + posy)
+				Screen.blitt(tm.tileset, tile - 1, (x * tm.tsize) + posx, (y * tm.tsize) + posy)
 			}
 			// show collision layer (optional)
 			c := coll.IData[y * tm.xml.Width + x]
 			if tm.showCollision && c > 0 {
-				screen.rect((x * tm.tsize) + posx, (y * tm.tsize) + posy, tm.tsize, tm.tsize, ColorCollision)
+				Screen.rect((x * tm.tsize) + posx, (y * tm.tsize) + posy, tm.tsize, tm.tsize, ColorCollision)
 			}
 		}
 	}

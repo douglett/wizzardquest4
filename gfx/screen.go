@@ -1,9 +1,9 @@
-package game
+package gfx
 import ray "github.com/gen2brain/raylib-go/raylib"
 import "fmt"
 import "math"
 
-type Screen struct {
+type ScreenType struct {
 	width, height, zoom, tsize int
 	winname     string
 	bgcolor     ray.Color
@@ -13,13 +13,13 @@ type Screen struct {
 	offsetx, offsety  int
 }
 
-func (scr *Screen) create() error {
+func (scr *ScreenType) Create() error {
 	// defaults
 	if scr.width <= 0     { scr.width = 640 }
 	if scr.height <= 0    { scr.height = 480 }
 	if scr.zoom <= 0      { scr.zoom = 1 }
 	if scr.tsize <= 0     { scr.tsize = 16 }
-	if scr.bgcolor.A == 0 { scr.bgcolor = ray.RayWhite }
+	if scr.bgcolor.A == 0 { scr.bgcolor = ray.Black }
 	if scr.winname == ""  { scr.winname = "Screen" }
 	scr.camera.Zoom = float32(scr.zoom)
 	// init raylib
@@ -33,19 +33,23 @@ func (scr *Screen) create() error {
 	return nil
 }
 
-func (scr *Screen) destroy() {
+func (scr *ScreenType) Destroy() {
 	ray.CloseAudioDevice()
 	ray.CloseWindow()
 	fmt.Println("Screen destroyed")
 }
 
-func (scr *Screen) begin() {
+func (scr *ScreenType) ShouldQuit() bool {
+	return ray.WindowShouldClose()
+}
+
+func (scr *ScreenType) Begin() {
 	ray.BeginDrawing()
 	ray.BeginMode2D(scr.camera)
 	ray.ClearBackground(scr.bgcolor)
 }
 
-func (scr *Screen) flip() {
+func (scr *ScreenType) Flip() {
 	// show framerate
 	fps := fmt.Sprintf("%d", ray.GetFPS())
 	fontw := int32(10)
@@ -57,20 +61,20 @@ func (scr *Screen) flip() {
 }
 
 // blit sub-pixel positions
-func (scr *Screen) blitf(tex ray.Texture2D, x, y float64) {
+func (scr *ScreenType) blitf(tex ray.Texture2D, x, y float64) {
 	scr.blit(tex, int(math.Round(x)), int(math.Round(y)))
 }
-func (scr *Screen) blittf(tex ray.Texture2D, tile int, x, y float64) {
+func (scr *ScreenType) blittf(tex ray.Texture2D, tile int, x, y float64) {
 	scr.blitt(tex, tile, int(math.Round(x)), int(math.Round(y)))
 }
 
 // texture blitting
-func (scr *Screen) blit(tex ray.Texture2D, x, y int) {
+func (scr *ScreenType) blit(tex ray.Texture2D, x, y int) {
 	ray.DrawTexture(tex, int32(x + scr.offsetx), int32(y + scr.offsety), ray.White)
 }
 
 // blit texture as tileset
-func (scr *Screen) blitt(tex ray.Texture2D, tile, x, y int) {
+func (scr *ScreenType) blitt(tex ray.Texture2D, tile, x, y int) {
 	tx := tile % (int(tex.Width) / scr.tsize)
 	ty := tile / (int(tex.Width) / scr.tsize)
 	src := ray.Rectangle{
@@ -81,10 +85,10 @@ func (scr *Screen) blitt(tex ray.Texture2D, tile, x, y int) {
 	ray.DrawTextureRec(tex, src, dst, ray.White)
 }
 
-func (scr *Screen) rect(x, y, w, h int, color ray.Color) {
+func (scr *ScreenType) rect(x, y, w, h int, color ray.Color) {
 	ray.DrawRectangle(int32(x + scr.offsetx), int32(y + scr.offsety), int32(w), int32(h), color)
 }
 
-func (scr *Screen) text(s string, x, y int) {
+func (scr *ScreenType) text(s string, x, y int) {
 	ray.DrawText(s, int32(x + scr.offsetx), int32(y + scr.offsety), 10, ray.White)
 }
