@@ -13,7 +13,10 @@ type ScreenType struct {
 	offsetx, offsety  int
 }
 
-func (scr *ScreenType) Create() error {
+// use screen singleton from globals
+var scr = &Screen
+
+func Create() error {
 	// defaults
 	if scr.width <= 0     { scr.width = 640 }
 	if scr.height <= 0    { scr.height = 480 }
@@ -30,26 +33,27 @@ func (scr *ScreenType) Create() error {
 	ray.SetTargetFPS(60)
 	// ok
 	fmt.Println("Screen initialized:", scr.width, scr.height)
+	Begin()
 	return nil
 }
 
-func (scr *ScreenType) Destroy() {
+func Destroy() {
 	ray.CloseAudioDevice()
 	ray.CloseWindow()
 	fmt.Println("Screen destroyed")
 }
 
-func (scr *ScreenType) ShouldQuit() bool {
+func ShouldQuit() bool {
 	return ray.WindowShouldClose()
 }
 
-func (scr *ScreenType) Begin() {
+func Begin() {
 	ray.BeginDrawing()
 	ray.BeginMode2D(scr.camera)
 	ray.ClearBackground(scr.bgcolor)
 }
 
-func (scr *ScreenType) Flip() {
+func Flip() {
 	// show framerate
 	fps := fmt.Sprintf("%d", ray.GetFPS())
 	fontw := int32(10)
@@ -58,23 +62,25 @@ func (scr *ScreenType) Flip() {
 	// flip
 	ray.EndMode2D()
 	ray.EndDrawing()
+	// begin drawing mode for next frame
+	Begin()
 }
 
 // blit sub-pixel positions
-func (scr *ScreenType) blitf(tex ray.Texture2D, x, y float64) {
-	scr.blit(tex, int(math.Round(x)), int(math.Round(y)))
+func Blitf(tex ray.Texture2D, x, y float64) {
+	Blit(tex, int(math.Round(x)), int(math.Round(y)))
 }
-func (scr *ScreenType) blittf(tex ray.Texture2D, tile int, x, y float64) {
-	scr.blitt(tex, tile, int(math.Round(x)), int(math.Round(y)))
+func Blittf(tex ray.Texture2D, tile int, x, y float64) {
+	Blitt(tex, tile, int(math.Round(x)), int(math.Round(y)))
 }
 
 // texture blitting
-func (scr *ScreenType) blit(tex ray.Texture2D, x, y int) {
+func Blit(tex ray.Texture2D, x, y int) {
 	ray.DrawTexture(tex, int32(x + scr.offsetx), int32(y + scr.offsety), ray.White)
 }
 
 // blit texture as tileset
-func (scr *ScreenType) blitt(tex ray.Texture2D, tile, x, y int) {
+func Blitt(tex ray.Texture2D, tile, x, y int) {
 	tx := tile % (int(tex.Width) / scr.tsize)
 	ty := tile / (int(tex.Width) / scr.tsize)
 	src := ray.Rectangle{
@@ -85,10 +91,10 @@ func (scr *ScreenType) blitt(tex ray.Texture2D, tile, x, y int) {
 	ray.DrawTextureRec(tex, src, dst, ray.White)
 }
 
-func (scr *ScreenType) rect(x, y, w, h int, color ray.Color) {
+func Rect(x, y, w, h int, color ray.Color) {
 	ray.DrawRectangle(int32(x + scr.offsetx), int32(y + scr.offsety), int32(w), int32(h), color)
 }
 
-func (scr *ScreenType) text(s string, x, y int) {
+func Text(s string, x, y int) {
 	ray.DrawText(s, int32(x + scr.offsetx), int32(y + scr.offsety), 10, ray.White)
 }

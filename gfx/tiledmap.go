@@ -66,12 +66,12 @@ func (tm *TiledMap) paint() {
 			// show game tile
 			tile := layer.IData[y * tm.xml.Width + x]
 			if tile > 0 {
-				Screen.blitt(tm.tileset, tile - 1, (x * tm.tsize) + posx, (y * tm.tsize) + posy)
+				Blitt(tm.tileset, tile - 1, (x * tm.tsize) + posx, (y * tm.tsize) + posy)
 			}
 			// show collision layer (optional)
 			c := coll.IData[y * tm.xml.Width + x]
 			if tm.showCollision && c > 0 {
-				Screen.rect((x * tm.tsize) + posx, (y * tm.tsize) + posy, tm.tsize, tm.tsize, ColorCollision)
+				Rect((x * tm.tsize) + posx, (y * tm.tsize) + posy, tm.tsize, tm.tsize, ColorCollision)
 			}
 		}
 	}

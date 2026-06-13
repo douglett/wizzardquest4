@@ -6,11 +6,10 @@ import "fmt"
 
 func main() {
 	fmt.Println("starting WizzardQuest4!")
-	gfx.Screen.Create()
-	defer gfx.Screen.Destroy()
+	gfx.Create()
+	defer gfx.Destroy()
 
-	for !gfx.Screen.ShouldQuit() {
-		gfx.Screen.Begin()
-		gfx.Screen.Flip()
+	for !gfx.ShouldQuit() {
+		gfx.Flip()
 	}
 }
