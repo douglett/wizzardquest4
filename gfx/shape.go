@@ -2,11 +2,10 @@ package gfx
 import ray "github.com/gen2brain/raylib-go/raylib"
 
 type Shape struct {
-	Paintable
-	Color  ray.Color
-	W, H   int
+	X, Y, W, H  int
+	Color       ray.Color
 }
 
-func (sh *Shape) Paint() {
-	Rect(sh.X, sh.Y, sh.W, sh.H, sh.Color)
+func (sh *Shape) Paint(x, y int) {
+	Rect(sh.X + y, sh.Y + y, sh.W, sh.H, sh.Color)
 }

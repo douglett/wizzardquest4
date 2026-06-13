@@ -7,10 +7,9 @@ var ColorOffBlack  = ray.Color{16, 8, 32, 255}
 var ColorWhite     = ray.Color{255, 255, 255, 255}
 var ColorBlack     = ray.Color{0, 0, 0, 255}
 
-// base drawable type
-type Paintable struct {
-	X, Y, Z  int
-	Name     string
+type Paintable interface {
+	Paint (x, y int)
+	// Zindex  () int
 }
 
 // game state
