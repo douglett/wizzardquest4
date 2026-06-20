@@ -2,15 +2,70 @@ package gfx
 import ray "github.com/gen2brain/raylib-go/raylib"
 import "fmt"
 
+// === qbasic graphcal font ===
+
 type QbfontT struct {
-	W, H     int
-	Data     []uint32
-	Texture  ray.Texture2D
+	W, H          int
+	Charw, Charh  int
+	Data          []uint32
+	Texture       ray.Texture2D
 }
+
+func (qb *QbfontT) Test() {
+	for i, d := range(qb.Data) {
+		fmt.Printf("%03d   %032b\n", i, d)
+		for j := range(32) {
+			v := (d >> (31 - j)) & 1
+			fmt.Printf("   %02d  %d \n", j, v)
+		}
+	}
+}
+
+func (qb *QbfontT) Build() {
+	if ray.IsTextureValid(qb.Texture) {
+		fmt.Println("Qbfont: trying to build twice. Aborting.")
+		return
+	}
+	// build image
+	// img := ray.GenImageColor(qb.W, qb.H, ray.Green)
+	img := ray.GenImageColor(qb.W, qb.H, ray.Blank)
+	for i, d := range(qb.Data) {
+		for j := range(32) {
+			v := (d >> (31 - j)) & 1
+			p := i*32 + j
+			y := int32(p / qb.W)
+			x := int32(p % qb.W)
+			if v > 0 { ray.ImageDrawPixel(img, x, y, ColorWhite) }
+		}
+	}
+	// convert to texture
+	qb.Texture = ray.LoadTextureFromImage(img)
+	ray.UnloadImage(img)
+}
+
+func (qb *QbfontT) Text(s string, x, y int, color ray.Color) {
+	// build point data
+	src := ray.Rectangle{ 0, 0, float32(qb.Charw), float32(qb.Charh) }
+	dst := ray.Vector2{ 0, float32(scr.Offy+y) }
+	pitch := qb.W / qb.Charw
+	// paint each character
+	for i, c := range(s) {
+		r := int(c)
+		src.Y = float32((r / pitch) * qb.Charh)
+		src.X = float32((r % pitch) * qb.Charw)
+		dst.X = float32(scr.Offx + x + i*qb.Charw)
+		ray.DrawTextureRec(Qbfont.Texture, src, dst, color)
+	}
+}
+
+
+// === define fonts ===
 
 var Qbfont = QbfontT{
 	W: 128,
 	H: 64,
+	Charw: 4,
+	Charh: 8,
 	Data: []uint32 {
 		0x06604440, 0xf0ff0774, 0x816a7706, 0x66000000, 0x09fa4440, 0xf0ff455d, 0xc3fab80f, 0xf600006f,
 		0x0f9eeae4, 0xb4bba756, 0xe76ab606, 0x6624066f, 0x09feeaee, 0x1a55a45f, 0xff6a7906, 0x66ff0f6f,
@@ -45,35 +100,4 @@ var Qbfont = QbfontT{
 		0xaa8a4a52, 0xa996fa8a, 0x04824405, 0x000a00e0, 0xac8a9a62, 0x49699c6a, 0xe000444a, 0x000600e0,
 		0x588af442, 0xe6f6680a, 0x0eee4800, 0x00040000, 0x08000080, 0x00000000, 0x00004000, 0x00000000,
 	},
-}
-
-func (qb *QbfontT) Test() {
-	for i, d := range(qb.Data) {
-		fmt.Printf("%03d   %032b\n", i, d)
-		for j := range(32) {
-			v := (d >> (31 - j)) & 1
-			fmt.Printf("   %02d  %d \n", j, v)
-		}
-	}
-}
-
-func (qb *QbfontT) Build() {
-	if ray.IsTextureValid(qb.Texture) {
-		fmt.Println("Qbfont: trying to build twice. Aborting.")
-		return
-	}
-	// build image
-	img := ray.GenImageColor(qb.W, qb.H, ray.Green)
-	for i, d := range(qb.Data) {
-		for j := range(32) {
-			v := (d >> (31 - j)) & 1
-			p := i*32 + j
-			y := int32(p / qb.W)
-			x := int32(p % qb.W)
-			if v > 0 { ray.ImageDrawPixel(img, x, y, ColorWhite) }
-		}
-	}
-	// convert to texture
-	qb.Texture = ray.LoadTextureFromImage(img)
-	ray.UnloadImage(img)
 }

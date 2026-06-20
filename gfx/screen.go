@@ -101,6 +101,6 @@ func Text(s string, x, y int) {
 	ray.DrawText(s, int32(x + scr.Offx), int32(y + scr.Offy), 10, ray.White)
 }
 
-func Qbtext(s string, x, y int) {
-	// Blit(qbFont.tex, 10, 10)
+func Qbtext(s string, x, y int, color ray.Color) {
+	Qbfont.Text(s, x, y, color)
 }
