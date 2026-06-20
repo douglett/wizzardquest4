@@ -29,6 +29,7 @@ func main() {
 	})
 
 	for !gfx.ShouldQuit() {
+		gfx.Blit(gfx.Qbfont.Texture, 10, 10)
 		scene.Paint(0, 0)
 		gfx.Flip()
 		// scene.X++

@@ -31,6 +31,8 @@ func Create() error {
 	ray.InitWindow(int32(scr.Width * scr.Zoom), int32(scr.Height * scr.Zoom), scr.Winname)
 	ray.InitAudioDevice()
 	ray.SetTargetFPS(60)
+	// internal init
+	Qbfont.Build()
 	// ok
 	fmt.Println("Screen initialized:", scr.Width, scr.Height)
 	Begin()
@@ -97,4 +99,8 @@ func Rect(x, y, w, h int, color ray.Color) {
 
 func Text(s string, x, y int) {
 	ray.DrawText(s, int32(x + scr.Offx), int32(y + scr.Offy), 10, ray.White)
+}
+
+func Qbtext(s string, x, y int) {
+	// Blit(qbFont.tex, 10, 10)
 }
