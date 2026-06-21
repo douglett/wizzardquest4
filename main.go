@@ -11,7 +11,28 @@ func main() {
 	defer gfx.Destroy()
 
 	// test1()
-	test2()
+	// test2()
+	test3()
+}
+
+// tiled map test
+func test3() {
+	gfx.Screen.Bgcolor = gfx.ColorOffBlack
+	scene := gfx.Container{}
+	tmap := gfx.TiledMap{ Tsize: 16, Debug: false }
+	tmap.Tileset = ray.LoadTexture("assets/monotiles.png")
+	tmap.Load("assets/level1.tmx")
+	scene.Append(&tmap)
+
+	scene.X = (gfx.Screen.Width - (tmap.Tw * tmap.Tsize)) / 2
+	scene.Y = (gfx.Screen.Height - (tmap.Th * tmap.Tsize)) / 2
+	fmt.Println(scene.X, scene.Y)
+
+	for !gfx.ShouldQuit() {
+		scene.Paint(0, 0)
+		gfx.Text("tiledmap test", 1, 1, ray.White)
+		gfx.Flip()
+	}
 }
 
 // color map test
@@ -40,7 +61,7 @@ func test2() {
 
 	for !gfx.ShouldQuit() {
 		scene.Paint(0, 0)
-		gfx.Text("map test", 10, 10, ray.White)
+		gfx.Text("mapcolors test", 10, 10, ray.White)
 		gfx.Flip()
 	}
 }

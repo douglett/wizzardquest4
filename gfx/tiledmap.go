@@ -7,10 +7,11 @@ import "strings"
 import "strconv"
 
 type TiledMap struct {
-	xml            XMLMap
-	tileset        ray.Texture2D
-	tsize          int
-	showCollision  bool
+	xml       XMLMap
+	Tw, Th    int
+	Tsize     int
+	Debug     bool
+	Tileset   ray.Texture2D
 }
 
 type XMLMap struct {
@@ -40,6 +41,8 @@ func (tm *TiledMap) Load(fname string) error {
 	// get data from xml
 	decoder := xml.NewDecoder(file)
 	decoder.Decode(&tm.xml)
+	tm.Tw = tm.xml.Width
+	tm.Th = tm.xml.Height
 
 	// decode layer data
 	for k := range tm.xml.Layer {
@@ -57,8 +60,11 @@ func (tm *TiledMap) Load(fname string) error {
 	return nil
 }
 
-func (tm *TiledMap) paint() {
-	posx, posy := 0, 0
+func (tm *TiledMap) Zindex() int {
+	return 0
+}
+
+func (tm *TiledMap) Paint(posx, posy int) {
 	layer := &tm.xml.Layer[0]
 	coll := &tm.xml.Layer[1]
 	for y := range tm.xml.Height {
@@ -66,12 +72,12 @@ func (tm *TiledMap) paint() {
 			// show game tile
 			tile := layer.IData[y * tm.xml.Width + x]
 			if tile > 0 {
-				Blitt(tm.tileset, tile - 1, (x * tm.tsize) + posx, (y * tm.tsize) + posy)
+				Blitt(tm.Tileset, tile - 1, (x * tm.Tsize) + posx, (y * tm.Tsize) + posy)
 			}
 			// show collision layer (optional)
 			c := coll.IData[y * tm.xml.Width + x]
-			if tm.showCollision && c > 0 {
-				Rect((x * tm.tsize) + posx, (y * tm.tsize) + posy, tm.tsize, tm.tsize, ColorCollision)
+			if tm.Debug && c > 0 {
+				Rect((x * tm.Tsize) + posx, (y * tm.Tsize) + posy, tm.Tsize, tm.Tsize, ColorCollision)
 			}
 		}
 	}
