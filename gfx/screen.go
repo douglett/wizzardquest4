@@ -59,9 +59,7 @@ func Begin() {
 func Flip() {
 	// show framerate
 	fps := fmt.Sprintf("%d", ray.GetFPS())
-	fontw := int32(10)
-	txtw := ray.MeasureText(fps, fontw)
-	ray.DrawText(fps, int32(scr.Width) - (txtw + 2), 1, fontw, ray.Green)
+	Qbfont.Text(fps, scr.Width - len(fps)*4 - 2, 2, ray.Green)
 	// flip
 	ray.EndMode2D()
 	ray.EndDrawing()
@@ -98,14 +96,14 @@ func Rect(x, y, w, h int, color ray.Color) {
 	ray.DrawRectangle(int32(x + scr.Offx), int32(y + scr.Offy), int32(w), int32(h), color)
 }
 
-func Text(s string, x, y int) {
+func RayText(s string, x, y int) {
 	ray.DrawText(s, int32(x + scr.Offx), int32(y + scr.Offy), 10, ray.White)
 }
 
-func Qbtext(s string, x, y int, color ray.Color) {
-	Qbfont.Text(s, x, y, color)
+func Text(s string, x, y int, color ray.Color) {
+	Qbfont.Text(s, scr.Offx + x, scr.Offy + y, color)
 }
 
-func Qbtext13(s string, x, y int, color ray.Color) {
-	Qbfont13.Text(s, x, y, color)
+func Text13(s string, x, y int, color ray.Color) {
+	Qbfont13.Text(s, scr.Offx + x, scr.Offy + y, color)
 }

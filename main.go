@@ -10,6 +10,10 @@ func main() {
 	gfx.Create()
 	defer gfx.Destroy()
 
+	test1()
+}
+
+func test1() {
 	scene := gfx.Container{ X: 0, Y: 0 }
 
 	r := gfx.Shape{
@@ -28,12 +32,19 @@ func main() {
 		Color: ray.Color{0, 0, 255, 255},
 	})
 
+	x := 0
+
 	for !gfx.ShouldQuit() {
 		scene.Paint(0, 0)
-		gfx.Qbtext("hello worldq", 10, 10, ray.White)
-		gfx.Qbtext("hello worldq", 10, 18, ray.Pink)
-		gfx.Qbtext13("hello worldq", 10, 30, ray.White)
-		gfx.Qbtext13("hello worldq", 10, 42, ray.Pink)
+
+		gfx.Text("hello worldq", 10, 10, ray.White)
+		gfx.Text("hello worldq", 10, 18, ray.Pink)
+		gfx.Text13("hello worldq", 10, 30, ray.White)
+		gfx.Text13("hello worldq", 10, 42, ray.Pink)
+
+		x = (x + 1) % (60 * 10)
+		gfx.Text(fmt.Sprintf("%d", x/10), 10, 60, ray.Blue)
+
 		gfx.Flip()
 		// scene.X++
 		// gfx.Screen.Offx++
