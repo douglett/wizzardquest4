@@ -1,7 +1,7 @@
 package main
+import ray "github.com/gen2brain/raylib-go/raylib"
 import "wizzardquest4/gfx"
 import "fmt"
-import ray "github.com/gen2brain/raylib-go/raylib"
 
 // var tmap TiledMap
 
@@ -10,9 +10,42 @@ func main() {
 	gfx.Create()
 	defer gfx.Destroy()
 
-	test1()
+	// test1()
+	test2()
 }
 
+// color map test
+func test2() {
+	scene := gfx.Container{}
+
+	gmap := MapColors{
+		tsize: 16,
+		colors: []ray.Color{
+			ray.Black,
+			ray.Red,
+			ray.Blue,
+		},
+		tw: 5,
+		th: 5,
+		data: []int {
+			1, 1, 1, 1, 1,
+			1, 0, 0, 0, 1,
+			1, 2, 0, 0, 1,
+			1, 0, 0, 0, 1,
+			1, 1, 1, 1, 1,
+		},
+	}
+
+	scene.Append(&gmap)
+
+	for !gfx.ShouldQuit() {
+		scene.Paint(0, 0)
+		gfx.Text("map test", 10, 10, ray.White)
+		gfx.Flip()
+	}
+}
+
+// basic drawing test
 func test1() {
 	scene := gfx.Container{ X: 0, Y: 0 }
 
