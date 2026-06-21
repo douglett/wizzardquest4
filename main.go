@@ -32,6 +32,8 @@ func main() {
 		scene.Paint(0, 0)
 		gfx.Qbtext("hello worldq", 10, 10, ray.White)
 		gfx.Qbtext("hello worldq", 10, 18, ray.Pink)
+		gfx.Qbtext13("hello worldq", 10, 30, ray.White)
+		gfx.Qbtext13("hello worldq", 10, 42, ray.Pink)
 		gfx.Flip()
 		// scene.X++
 		// gfx.Screen.Offx++

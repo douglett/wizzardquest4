@@ -33,6 +33,7 @@ func Create() error {
 	ray.SetTargetFPS(60)
 	// internal init
 	Qbfont.Build()
+	Qbfont13.Build()
 	// ok
 	fmt.Println("Screen initialized:", scr.Width, scr.Height)
 	Begin()
@@ -103,4 +104,8 @@ func Text(s string, x, y int) {
 
 func Qbtext(s string, x, y int, color ray.Color) {
 	Qbfont.Text(s, x, y, color)
+}
+
+func Qbtext13(s string, x, y int, color ray.Color) {
+	Qbfont13.Text(s, x, y, color)
 }
