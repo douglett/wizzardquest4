@@ -82,3 +82,11 @@ func (tm *TiledMap) Paint(posx, posy int) {
 		}
 	}
 }
+
+func (tm *TiledMap) Tile(x, y int) (int, bool) {
+	xml := tm.xml
+	if x < 0 || y < 0 || x >= xml.Width || y >= xml.Height { return 0, true }
+	t := xml.Layer[0].IData[y * xml.Width + x]
+	c := xml.Layer[1].IData[y * xml.Width + x] > 0 // TODO: identify tile layer?
+	return t, c
+}

@@ -41,11 +41,16 @@ func test3() {
 	for !gfx.ShouldQuit() {
 		// select direction
 		if dir == -1 {
+			tx, ty := player.X / 16, player.Y / 16
 			switch {
-				case ray.IsKeyDown(ray.KeyUp):     dir = 0
-				case ray.IsKeyDown(ray.KeyRight):  dir = 1
-				case ray.IsKeyDown(ray.KeyDown):   dir = 2
-				case ray.IsKeyDown(ray.KeyLeft):   dir = 3
+				case ray.IsKeyDown(ray.KeyUp):
+					if _, coll := tmap.Tile(tx, ty-1); !coll { dir = 0 }
+				case ray.IsKeyDown(ray.KeyRight):
+					if _, coll := tmap.Tile(tx+1, ty); !coll { dir = 1 }
+				case ray.IsKeyDown(ray.KeyDown):
+					if _, coll := tmap.Tile(tx, ty+1); !coll { dir = 2 }
+				case ray.IsKeyDown(ray.KeyLeft):
+					if _, coll := tmap.Tile(tx-1, ty); !coll { dir = 3 }
 			}
 		}
 		// player walk animation
@@ -64,6 +69,7 @@ func test3() {
 		}
 
 		// paint
+		if dir > -1 { player.Tile = dir }
 		scene.Paint(0, 0)
 		gfx.Text("tiledmap test", 1, 1, ray.White)
 		gfx.Flip()
