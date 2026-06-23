@@ -17,18 +17,53 @@ func main() {
 
 // tiled map test
 func test3() {
+	// scene
 	gfx.Screen.Bgcolor = gfx.ColorOffBlack
 	scene := gfx.Container{}
+	// map
 	tmap := gfx.TiledMap{ Tsize: 16, Debug: false }
 	tmap.Tileset = ray.LoadTexture("assets/monotiles.png")
 	tmap.Load("assets/level1.tmx")
 	scene.Append(&tmap)
+	// player sprite
+	player := gfx.Sprite{ Tsize: 16, X: 16, Y: 16, Tile: 2 }
+	player.Tileset = ray.LoadTexture("assets/sprites.png")
+	scene.Append(&player)
 
+	// center screen
 	scene.X = (gfx.Screen.Width - (tmap.Tw * tmap.Tsize)) / 2
 	scene.Y = (gfx.Screen.Height - (tmap.Th * tmap.Tsize)) / 2
 	fmt.Println(scene.X, scene.Y)
 
+	dir := -1
+	walk := 0
+
 	for !gfx.ShouldQuit() {
+		// select direction
+		if dir == -1 {
+			switch {
+				case ray.IsKeyDown(ray.KeyUp):     dir = 0
+				case ray.IsKeyDown(ray.KeyRight):  dir = 1
+				case ray.IsKeyDown(ray.KeyDown):   dir = 2
+				case ray.IsKeyDown(ray.KeyLeft):   dir = 3
+			}
+		}
+		// player walk animation
+		if dir > -1 {
+			switch dir {
+				case 0:  player.Y--
+				case 1:  player.X++
+				case 2:  player.Y++
+				case 3:  player.X--
+			}
+			walk++
+			if walk >= 16 {
+				dir = -1
+				walk = 0
+			}
+		}
+
+		// paint
 		scene.Paint(0, 0)
 		gfx.Text("tiledmap test", 1, 1, ray.White)
 		gfx.Flip()
