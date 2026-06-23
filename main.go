@@ -37,6 +37,7 @@ func test3() {
 
 	dir := -1
 	walk := 0
+	moves := 0
 
 	for !gfx.ShouldQuit() {
 		// select direction
@@ -44,34 +45,43 @@ func test3() {
 			tx, ty := player.X / 16, player.Y / 16
 			switch {
 				case ray.IsKeyDown(ray.KeyUp):
-					if _, coll := tmap.Tile(tx, ty-1); !coll { dir = 0 }
+					player.Tile = 0
+					_, c1 := tmap.Tile(tx, ty-1)
+					_, c2 := tmap.Tile(tx, ty-2)
+					if !c1 && !c2 { dir = 0; moves++ }
 				case ray.IsKeyDown(ray.KeyRight):
-					if _, coll := tmap.Tile(tx+1, ty); !coll { dir = 1 }
+					player.Tile = 1
+					_, c1 := tmap.Tile(tx+1, ty)
+					_, c2 := tmap.Tile(tx+2, ty)
+					if !c1 && !c2 { dir = 1; moves++ }
 				case ray.IsKeyDown(ray.KeyDown):
-					if _, coll := tmap.Tile(tx, ty+1); !coll { dir = 2 }
+					player.Tile = 2
+					_, c1 := tmap.Tile(tx, ty+1)
+					_, c2 := tmap.Tile(tx, ty+2)
+					if !c1 && !c2 { dir = 2; moves++ }
 				case ray.IsKeyDown(ray.KeyLeft):
-					if _, coll := tmap.Tile(tx-1, ty); !coll { dir = 3 }
+					player.Tile = 3
+					_, c1 := tmap.Tile(tx-1, ty)
+					_, c2 := tmap.Tile(tx-2, ty)
+					if !c1 && !c2 { dir = 3; moves++ }
 			}
 		}
 		// player walk animation
 		if dir > -1 {
 			switch dir {
-				case 0:  player.Y--
-				case 1:  player.X++
-				case 2:  player.Y++
-				case 3:  player.X--
+				case 0:  player.Y -= 2
+				case 1:  player.X += 2
+				case 2:  player.Y += 2
+				case 3:  player.X -= 2
 			}
 			walk++
-			if walk >= 16 {
-				dir = -1
-				walk = 0
-			}
+			if walk >= 16 { dir = -1; walk = 0 }
 		}
 
 		// paint
 		if dir > -1 { player.Tile = dir }
 		scene.Paint(0, 0)
-		gfx.Text("tiledmap test", 1, 1, ray.White)
+		gfx.Text(fmt.Sprintf("moves: %d", moves), 1, 1, ray.Blue)
 		gfx.Flip()
 	}
 }
