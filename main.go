@@ -29,6 +29,10 @@ func test3() {
 	player := gfx.Sprite{ Tsize: 16, X: 16, Y: 16, Tile: 2 }
 	player.Tileset = ray.LoadTexture("assets/sprites.png")
 	scene.Append(&player)
+	// enemy sprite
+	enemy := gfx.Sprite{ Tsize: 16, X: 3*16, Y: 1*16, Tile: 2 }
+	enemy.Tileset = ray.LoadTexture("assets/sprites.png")
+	scene.Append(&enemy)
 
 	// center screen
 	scene.X = (gfx.Screen.Width - (tmap.Tw * tmap.Tsize)) / 2
@@ -42,28 +46,32 @@ func test3() {
 	for !gfx.ShouldQuit() {
 		// select direction
 		if dir == -1 {
-			tx, ty := player.X / 16, player.Y / 16
+			tx, ty := player.X/16, player.Y/16
 			switch {
 				case ray.IsKeyDown(ray.KeyUp):
 					player.Tile = 0
 					_, c1 := tmap.Tile(tx, ty-1)
 					_, c2 := tmap.Tile(tx, ty-2)
-					if !c1 && !c2 { dir = 0; moves++ }
+					c3 := enemy.X/16 == tx && enemy.Y/16 == ty-2
+					if !c1 && !c2 && !c3 { dir = 0; moves++ }
 				case ray.IsKeyDown(ray.KeyRight):
 					player.Tile = 1
 					_, c1 := tmap.Tile(tx+1, ty)
 					_, c2 := tmap.Tile(tx+2, ty)
-					if !c1 && !c2 { dir = 1; moves++ }
+					c3 := enemy.X/16 == tx+2 && enemy.Y/16 == ty
+					if !c1 && !c2 && !c3 { dir = 1; moves++ }
 				case ray.IsKeyDown(ray.KeyDown):
 					player.Tile = 2
 					_, c1 := tmap.Tile(tx, ty+1)
 					_, c2 := tmap.Tile(tx, ty+2)
-					if !c1 && !c2 { dir = 2; moves++ }
+					c3 := enemy.X/16 == tx && enemy.Y/16 == ty+2
+					if !c1 && !c2 && !c3 { dir = 2; moves++ }
 				case ray.IsKeyDown(ray.KeyLeft):
 					player.Tile = 3
 					_, c1 := tmap.Tile(tx-1, ty)
 					_, c2 := tmap.Tile(tx-2, ty)
-					if !c1 && !c2 { dir = 3; moves++ }
+					c3 := enemy.X/16 == tx-2 && enemy.Y/16 == ty
+					if !c1 && !c2 && !c3 { dir = 3; moves++ }
 			}
 		}
 		// player walk animation
