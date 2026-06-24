@@ -2,12 +2,13 @@ package main
 import ray "github.com/gen2brain/raylib-go/raylib"
 import "wizzardquest4/gfx"
 import "fmt"
+import "slices"
 
 // globals
 var scene  = gfx.Container{}
 var tmap   = gfx.TiledMap{ Tsize: 16, Debug: false }
 var player = gfx.Sprite{ Id: "player", Tsize: 16, Tile: 2 }
-var enemys = []*gfx.Sprite{}
+var mobs   = []*gfx.Sprite{}
 
 // start
 func main() {
@@ -32,11 +33,13 @@ func test3() {
 	player.X, player.Y = 16, 16
 	player.Tileset = ray.LoadTexture("assets/sprites.png")
 	scene.Append(&player)
-	// enemy sprite
-	enemy := gfx.Sprite{ Id: "rslime", Tsize: 16, X: 3*16, Y: 1*16, Tile: 2 }
-	enemy.Tileset = ray.LoadTexture("assets/sprites.png")
-	enemys = append(enemys, &enemy)
-	scene.Append(&enemy)
+	// mob sprites
+	for i := range(3) {
+		m := gfx.Sprite{ Id: fmt.Sprintf("rslime%02d", i), Tsize: 16, X: 3*16, Y: (1+i*2)*16, Tile: 2 }
+		m.Tileset = ray.LoadTexture("assets/sprites.png")
+		mobs = append(mobs, &m)
+		scene.Append(&m)
+	}
 
 	// center screen
 	scene.X = (gfx.Screen.Width - (tmap.Tw * tmap.Tsize)) / 2
@@ -56,26 +59,26 @@ func test3() {
 					player.Tile = 0
 					_, c1 := tmap.Tile(tx, ty-1)
 					_, c2 := tmap.Tile(tx, ty-2)
-					c3 := collideEnemy(0)
-					if !c1 && !c2 && c3 == nil { dir = 0; moves++ }
+					collideEnemy(0)
+					if !c1 && !c2 { dir = 0; moves++ }
 				case ray.IsKeyDown(ray.KeyRight):
 					player.Tile = 1
 					_, c1 := tmap.Tile(tx+1, ty)
 					_, c2 := tmap.Tile(tx+2, ty)
-					c3 := collideEnemy(1)
-					if !c1 && !c2 && c3 == nil { dir = 1; moves++ }
+					collideEnemy(1)
+					if !c1 && !c2 { dir = 1; moves++ }
 				case ray.IsKeyDown(ray.KeyDown):
 					player.Tile = 2
 					_, c1 := tmap.Tile(tx, ty+1)
 					_, c2 := tmap.Tile(tx, ty+2)
-					c3 := collideEnemy(2)
-					if !c1 && !c2 && c3 == nil { dir = 2; moves++ }
+					collideEnemy(2)
+					if !c1 && !c2 { dir = 2; moves++ }
 				case ray.IsKeyDown(ray.KeyLeft):
 					player.Tile = 3
 					_, c1 := tmap.Tile(tx-1, ty)
 					_, c2 := tmap.Tile(tx-2, ty)
-					c3 := collideEnemy(3)
-					if !c1 && !c2 && c3 == nil { dir = 3; moves++ }
+					collideEnemy(3)
+					if !c1 && !c2 { dir = 3; moves++ }
 			}
 		}
 		// player walk animation
@@ -107,10 +110,12 @@ func collideEnemy(dir int) *gfx.Sprite {
 		case 2:  dy = 2
 		case 3:  dx = -2
 	}
-	for _, e := range(enemys) {
-		if player.X/t + dx == e.X/t && player.Y/t + dy == e.Y/t {
-			fmt.Println("collide", e)
-			return e
+	for i, m := range(mobs) {
+		if player.X/t + dx == m.X/t && player.Y/t + dy == m.Y/t {
+			fmt.Println("collide", m)
+			mobs = slices.Delete(mobs, i, i+1)
+			scene.Remove(m)
+			return m
 		}
 	}
 	return nil
