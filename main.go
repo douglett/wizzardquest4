@@ -3,8 +3,13 @@ import ray "github.com/gen2brain/raylib-go/raylib"
 import "wizzardquest4/gfx"
 import "fmt"
 
-// var tmap TiledMap
+// globals
+var scene  = gfx.Container{}
+var tmap   = gfx.TiledMap{ Tsize: 16, Debug: false }
+var player = gfx.Sprite{ Id: "player", Tsize: 16, Tile: 2 }
+var enemys = []*gfx.Sprite{}
 
+// start
 func main() {
 	fmt.Println("starting WizzardQuest4!")
 	gfx.Create()
@@ -19,19 +24,18 @@ func main() {
 func test3() {
 	// scene
 	gfx.Screen.Bgcolor = gfx.ColorOffBlack
-	scene := gfx.Container{}
 	// map
-	tmap := gfx.TiledMap{ Tsize: 16, Debug: false }
 	tmap.Tileset = ray.LoadTexture("assets/monotiles.png")
 	tmap.Load("assets/level1.tmx")
 	scene.Append(&tmap)
 	// player sprite
-	player := gfx.Sprite{ Tsize: 16, X: 16, Y: 16, Tile: 2 }
+	player.X, player.Y = 16, 16
 	player.Tileset = ray.LoadTexture("assets/sprites.png")
 	scene.Append(&player)
 	// enemy sprite
-	enemy := gfx.Sprite{ Tsize: 16, X: 3*16, Y: 1*16, Tile: 2 }
+	enemy := gfx.Sprite{ Id: "rslime", Tsize: 16, X: 3*16, Y: 1*16, Tile: 2 }
 	enemy.Tileset = ray.LoadTexture("assets/sprites.png")
+	enemys = append(enemys, &enemy)
 	scene.Append(&enemy)
 
 	// center screen
@@ -52,26 +56,26 @@ func test3() {
 					player.Tile = 0
 					_, c1 := tmap.Tile(tx, ty-1)
 					_, c2 := tmap.Tile(tx, ty-2)
-					c3 := enemy.X/16 == tx && enemy.Y/16 == ty-2
-					if !c1 && !c2 && !c3 { dir = 0; moves++ }
+					c3 := collideEnemy(0)
+					if !c1 && !c2 && c3 == nil { dir = 0; moves++ }
 				case ray.IsKeyDown(ray.KeyRight):
 					player.Tile = 1
 					_, c1 := tmap.Tile(tx+1, ty)
 					_, c2 := tmap.Tile(tx+2, ty)
-					c3 := enemy.X/16 == tx+2 && enemy.Y/16 == ty
-					if !c1 && !c2 && !c3 { dir = 1; moves++ }
+					c3 := collideEnemy(1)
+					if !c1 && !c2 && c3 == nil { dir = 1; moves++ }
 				case ray.IsKeyDown(ray.KeyDown):
 					player.Tile = 2
 					_, c1 := tmap.Tile(tx, ty+1)
 					_, c2 := tmap.Tile(tx, ty+2)
-					c3 := enemy.X/16 == tx && enemy.Y/16 == ty+2
-					if !c1 && !c2 && !c3 { dir = 2; moves++ }
+					c3 := collideEnemy(2)
+					if !c1 && !c2 && c3 == nil { dir = 2; moves++ }
 				case ray.IsKeyDown(ray.KeyLeft):
 					player.Tile = 3
 					_, c1 := tmap.Tile(tx-1, ty)
 					_, c2 := tmap.Tile(tx-2, ty)
-					c3 := enemy.X/16 == tx-2 && enemy.Y/16 == ty
-					if !c1 && !c2 && !c3 { dir = 3; moves++ }
+					c3 := collideEnemy(3)
+					if !c1 && !c2 && c3 == nil { dir = 3; moves++ }
 			}
 		}
 		// player walk animation
@@ -94,36 +98,25 @@ func test3() {
 	}
 }
 
-// color map test
-func test2() {
-	scene := gfx.Container{}
-
-	gmap := MapColors{
-		tsize: 16,
-		colors: []ray.Color{
-			ray.Black,
-			ray.Red,
-			ray.Blue,
-		},
-		tw: 5,
-		th: 5,
-		data: []int {
-			1, 1, 1, 1, 1,
-			1, 0, 0, 0, 1,
-			1, 2, 0, 0, 1,
-			1, 0, 0, 0, 1,
-			1, 1, 1, 1, 1,
-		},
+func collideEnemy(dir int) *gfx.Sprite {
+	t := tmap.Tsize
+	dx, dy := 0, 0
+	switch dir {
+		case 0:  dy = -2
+		case 1:  dx = 2
+		case 2:  dy = 2
+		case 3:  dx = -2
 	}
-
-	scene.Append(&gmap)
-
-	for !gfx.ShouldQuit() {
-		scene.Paint(0, 0)
-		gfx.Text("mapcolors test", 10, 10, ray.White)
-		gfx.Flip()
+	for _, e := range(enemys) {
+		if player.X/t + dx == e.X/t && player.Y/t + dy == e.Y/t {
+			fmt.Println("collide", e)
+			return e
+		}
 	}
+	return nil
 }
+
+
 
 // basic drawing test
 func test1() {

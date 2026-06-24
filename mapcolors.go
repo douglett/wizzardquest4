@@ -3,7 +3,6 @@ import ray "github.com/gen2brain/raylib-go/raylib"
 import "wizzardquest4/gfx"
 
 type MapColors struct {
-	x, y     int
 	tw, th   int
 	tsize    int
 	colors   []ray.Color
@@ -22,3 +21,21 @@ func (mc *MapColors) Paint(posx, posy int) {
 		}
 	}
 }
+
+// gmap := MapColors{
+// 	tsize: 16,
+// 	colors: []ray.Color{
+// 		ray.Black,
+// 		ray.Red,
+// 		ray.Blue,
+// 	},
+// 	tw: 5,
+// 	th: 5,
+// 	data: []int {
+// 		1, 1, 1, 1, 1,
+// 		1, 0, 0, 0, 1,
+// 		1, 2, 0, 0, 1,
+// 		1, 0, 0, 0, 1,
+// 		1, 1, 1, 1, 1,
+// 	},
+// }

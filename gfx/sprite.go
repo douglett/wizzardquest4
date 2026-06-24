@@ -2,6 +2,7 @@ package gfx
 import ray "github.com/gen2brain/raylib-go/raylib"
 
 type Sprite struct {
+	Id        string
 	X, Y, Z   int
 	Tile      int
 	Tsize     int
