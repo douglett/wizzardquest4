@@ -7,7 +7,7 @@ import "strings"
 import "strconv"
 
 type TiledMap struct {
-	xml       XMLMap
+	Xml       XMLMap
 	Tw, Th    int
 	Tsize     int
 	Debug     bool
@@ -40,13 +40,14 @@ func (tm *TiledMap) Load(fname string) error {
 
 	// get data from xml
 	decoder := xml.NewDecoder(file)
-	decoder.Decode(&tm.xml)
-	tm.Tw = tm.xml.Width
-	tm.Th = tm.xml.Height
+	decoder.Decode(&tm.Xml)
+	xml := &tm.Xml
+	tm.Tw = xml.Width
+	tm.Th = xml.Height
 
 	// decode layer data
-	for k := range tm.xml.Layer {
-		layer := &tm.xml.Layer[k]
+	for k := range xml.Layer {
+		layer := &xml.Layer[k]
 		data := strings.Split(layer.Data, ",")
 		idata := []int{}
 		for _, v := range data {
@@ -65,17 +66,18 @@ func (tm *TiledMap) Zindex() int {
 }
 
 func (tm *TiledMap) Paint(posx, posy int) {
-	layer := &tm.xml.Layer[0]
-	coll := &tm.xml.Layer[1]
-	for y := range tm.xml.Height {
-		for x := range tm.xml.Width {
+	xml := &tm.Xml
+	layer := &xml.Layer[0]
+	coll := &xml.Layer[1]
+	for y := range xml.Height {
+		for x := range xml.Width {
 			// show game tile
-			tile := layer.IData[y * tm.xml.Width + x]
+			tile := layer.IData[y * xml.Width + x]
 			if tile > 0 {
 				Blitt(tm.Tileset, tile - 1, (x * tm.Tsize) + posx, (y * tm.Tsize) + posy)
 			}
 			// show collision layer (optional)
-			c := coll.IData[y * tm.xml.Width + x]
+			c := coll.IData[y * xml.Width + x]
 			if tm.Debug && c > 0 {
 				Rect((x * tm.Tsize) + posx, (y * tm.Tsize) + posy, tm.Tsize, tm.Tsize, ColorCollision)
 			}
@@ -84,9 +86,16 @@ func (tm *TiledMap) Paint(posx, posy int) {
 }
 
 func (tm *TiledMap) Tile(x, y int) (int, bool) {
-	xml := tm.xml
+	xml := tm.Xml
 	if x < 0 || y < 0 || x >= xml.Width || y >= xml.Height { return 0, true }
 	t := xml.Layer[0].IData[y * xml.Width + x]
 	c := xml.Layer[1].IData[y * xml.Width + x] > 0 // TODO: identify tile layer?
 	return t, c
+}
+
+func (tm *TiledMap) Settile(x, y, tile, col int) {
+	xml := tm.Xml
+	if x < 0 || y < 0 || x >= xml.Width || y >= xml.Height { return }
+	xml.Layer[0].IData[y * xml.Width + x] = tile
+	xml.Layer[1].IData[y * xml.Width + x] = col // TODO: identify tile layer?
 }

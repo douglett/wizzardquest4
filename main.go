@@ -115,10 +115,23 @@ func collideEnemy(dir int) *gfx.Sprite {
 			fmt.Println("collide", m)
 			mobs = slices.Delete(mobs, i, i+1)
 			scene.Remove(m)
+			checkDoor()
 			return m
 		}
 	}
 	return nil
+}
+
+func checkDoor() {
+	if len(mobs) > 0 { return }
+	tl := &tmap.Xml.Layer[0]
+	cl := &tmap.Xml.Layer[1]
+	for i, t := range(tl.IData) {
+		if t == 16 {
+			tl.IData[i] = 0
+			cl.IData[i] = 0
+		}
+	}
 }
 
 
