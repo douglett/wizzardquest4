@@ -17,13 +17,11 @@ func main() {
 	gfx.Create()
 	defer gfx.Destroy()
 
-	// test1()
-	// test2()
-	test3()
+	mainloop()
 }
 
 // tiled map test
-func test3() {
+func mainloop() {
 	// scene
 	gfx.Screen.Bgcolor = gfx.ColorOffBlack
 	// map
@@ -65,6 +63,7 @@ func test3() {
 		if moves > cmoves {
 			fmt.Println("moved")
 			checkDoor()
+			checkExit()
 		}
 		// paint
 		paintall()
@@ -109,7 +108,7 @@ func movePlayer(dir int) {
 
 func collideEnemy(dir int) *gfx.Sprite {
 	t := tmap.Tsize
-	tx, ty := player.X/16, player.Y/16
+	tx, ty := player.X/t, player.Y/t
 	dx, dy := dirToTiles(dir)
 	for i, m := range(mobs) {
 		if tx + dx*2 == m.X/t && ty + dy*2 == m.Y/t {
@@ -124,12 +123,20 @@ func collideEnemy(dir int) *gfx.Sprite {
 
 func checkDoor() {
 	if len(mobs) > 0 { return }
-	tl := &tmap.Xml.Layer[0]
-	cl := &tmap.Xml.Layer[1]
-	for i, t := range(tl.IData) {
-		if t == 16 {
-			tl.IData[i] = 0
-			cl.IData[i] = 0
+	for y := range(tmap.Th) {
+		for x := range(tmap.Tw) {
+			if t, _ := tmap.Tile(x, y); t == 16 {
+				tmap.Settile(x, y, 0, false)
+			}
 		}
+	}
+}
+
+func checkExit() {
+	t := tmap.Tsize
+	tx, ty := player.X/t, player.Y/t
+	tile, _ := tmap.Tile(tx, ty)
+	if tile == 12 {
+		panic("game win")
 	}
 }

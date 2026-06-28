@@ -93,9 +93,11 @@ func (tm *TiledMap) Tile(x, y int) (int, bool) {
 	return t, c
 }
 
-func (tm *TiledMap) Settile(x, y, tile, col int) {
+func (tm *TiledMap) Settile(x, y, tile int, col bool) {
 	xml := tm.Xml
 	if x < 0 || y < 0 || x >= xml.Width || y >= xml.Height { return }
 	xml.Layer[0].IData[y * xml.Width + x] = tile
-	xml.Layer[1].IData[y * xml.Width + x] = col // TODO: identify tile layer?
+	lv := 0
+	if col { lv = 1 } // go continues to annoy me...
+	xml.Layer[1].IData[y * xml.Width + x] = lv // TODO: identify tile layer?
 }
