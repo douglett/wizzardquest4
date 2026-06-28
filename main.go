@@ -64,6 +64,7 @@ func mainloop() {
 			fmt.Println("moved")
 			checkDoor()
 			checkExit()
+			moveMobs()
 		}
 		// paint
 		paintall()
@@ -138,5 +139,18 @@ func checkExit() {
 	tile, _ := tmap.Tile(tx, ty)
 	if tile == 12 {
 		panic("game win")
+	}
+}
+
+func moveMobs() {
+	t := tmap.Tsize
+	tx, ty := player.X/t, player.Y/t
+	for _, m := range(mobs) {
+		// attack if player is in front of us
+		dx, dy := dirToTiles(m.Tile)
+		mx, my := m.X/t + dx*2, m.Y/t + dy*2
+		if mx == tx && my == ty {
+			fmt.Println("attack!", m.Id)
+		}
 	}
 }
